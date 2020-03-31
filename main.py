@@ -19,8 +19,8 @@ def edo(S, I, R, beta, gamma, N):
     '''
     St = - beta * S * I / N + S
     It = beta * S * I / N - I * (gamma - 1)
-#    Rt = beta * I - R
-    Rt = N - St - It
+    Rt = gamma * I + R
+#    Rt = N - St - It
     return St, It, Rt
 # maybe compute Rt as N - St - It to be sure that N = sum(S, I, R) ?
 
@@ -45,7 +45,7 @@ N = 1000
 I0 = 10
 R0 = 0
 S0 = N - I0 - R0
-beta = 0.4
+beta = 0.2
 gamma = 0.1
 # R0 = beta/gamma    /!\ attention  pas le même R0 que l'initialisation de removed population
 
@@ -56,22 +56,19 @@ gamma = 0.1
 end = 200
 t = np.linspace(0, 200, 200)
 Ls, Li, Lr = SIR(S0, I0, R0, beta, gamma, N, end)
-print(Ls)
-print(Li)
-print(Lr)
 
-
+#normaliser
 Ls = Ls / N
 Li = Li / N
 Lr = Lr / N
 
-plt.plot(t, Ls, marker='o', color='blue', label='S(t)')
-plt.plot(t, Li, marker='o', color='orange', label='I(t)')
-plt.plot(t, Lr, marker='o', color='green', label='R(t)')
+plt.plot(t, Li, marker='.', color='orange', label='I(t)')
+plt.plot(t, Ls, marker='.', color='skyblue', label='S(t)')
+plt.plot(t, Lr, marker='.', color='grey', label='R(t)')
 plt.legend()
 plt.show()
 
-plt.stackplot(t, Ls, Li, Lr, labels=['S(t)', 'I(t)', 'R(t)'])
+plt.stackplot(t, Li, Ls, Lr, labels=['I(t)', 'S(t)', 'R(t)'], colors=['orange', 'skyblue', 'grey'])
 plt.legend(loc='upper left')
 plt.margins(0,0)
 plt.show()
