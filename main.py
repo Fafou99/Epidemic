@@ -25,12 +25,15 @@ def edo(S, I, R, beta, gamma, N):
 
 
 def SIR(S0, I0, R0, beta, gamma, N, end):
-    Ls, Li, Lr = [S0], [I0], [R0]
-    for _ in range(end):
+    Ls, Li, Lr = np.empty(end), np.empty(end), np.empty(end)
+    Ls[0] = S0
+    Li[0] = I0
+    Lr[0] = R0
+    for i in range(1, end):
         St, It, Rt = edo(Ls[-1], Li[-1], Lr[-1], beta, gamma, N)
-        Ls.append(St)
-        Li.append(It)
-        Lr.append(Rt)
+        Ls[i] = St
+        Li[i] = It
+        Lr[i] = Rt
     return Ls, Li, Lr
 
 
@@ -45,7 +48,7 @@ N = 1000
 I0 = 10
 R0 = 0
 S0 = N - I0 - R0
-beta = 0.5
+beta = 0.2
 gamma = 0.2
 # R0 = beta/gamma    /!\ attention  pas le même R0 que l'initialisation de removed population
 
@@ -56,3 +59,15 @@ gamma = 0.2
 end = 200
 t = np.linspace(0, 200, 200)
 Ls, Li, Lr = SIR(S0, I0, R0, beta, gamma, N, end)
+print(Ls, Li, Lr)
+
+Ls = Ls / N
+Li = Li / N
+Lr = Lr / N
+
+print(Ls, Li, Lr)
+
+plt.stackplot(t, Ls, Li, Lr, labels=['S(t)', 'I(t)', 'R(t)'])
+plt.legend(loc='upper left')
+plt.margins(0,0)
+plt.show()
