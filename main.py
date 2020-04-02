@@ -38,13 +38,16 @@ def edo_continue(S, I, R, beta, gamma, N):
     return St, It, Rt
 
 
-def SIR(S0, I0, D0, C0, beta, gamma, delta, N, end, betaconf):
+def SIR(S0, I0, D0, C0, beta, gamma, delta, N, end, betaconf,deltaSaturation):
     Ls, Li, Ld, Lc = np.empty(end), np.empty(end), np.empty(end), np.empty(end)
     St, It, Dt, Ct = S0, I0, D0, C0
     for t in range(end):
         Ls[t], Li[t], Ld[t], Lc[t] = St, It, Dt, Ct
-        if It >= 0.4 * N :
+        if It >= 0.1 * N :
             beta = betaconf
+        if It >= 0.3*N:
+            delta=deltaSaturation
+            
         St, It, Dt, Ct = edo_discret(St, It, Dt, Ct, beta, gamma, delta, N)
     return Ls, Li, Ld, Lc
 
@@ -57,21 +60,23 @@ def SIR(S0, I0, D0, C0, beta, gamma, delta, N, end, betaconf):
 # total population
 N = 1000
 # initialisation
-I0 = 10
+I0 = 1
 D0 = 0
 C0 = 0
 S0 = N - I0 - D0 - C0
 
-p1 = 1/50 # probabilité de transmission lors d'un contact entre un I et un S
+p1 = 1/100 # probabilité de transmission lors d'un contact entre un I et un S
 c1 = 30 # nombre de contact par unité de temps
 
-p2 = 1/100
-c2 = 3
+p2 = 1/50
+c2 = 10
 
 beta = p1 * c1
 betaconf = p2 * c2
 gamma = 1/20
-delta = 1/2
+delta = 1/10
+deltaSaturation=2/3
+
 
 #Rnutch = beta/gamma    #/!\ attention  pas le même R0 que l'initialisation de removed population
 
@@ -80,9 +85,9 @@ delta = 1/2
 # SIMULATION AND PLOT
 # =============================================================================
 
-end = 60
+end = 200
 t = np.linspace(0, end, end)
-Ls, Li, Ld, Lc = SIR(S0, I0, D0, C0, beta, gamma, delta, N, end, betaconf)
+Ls, Li, Ld, Lc = SIR(S0, I0, D0, C0, beta, gamma, delta, N, end, betaconf,deltaSaturation)
 
 #normaliser
 Ls = Ls / N
